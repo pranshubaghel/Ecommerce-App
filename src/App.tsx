@@ -1,26 +1,42 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from 'react';
+import Header from './Components/EcommerceApp/Header'; // Adjust the import path as necessary
+import ProductList from './Components/EcommerceApp/ProductList'; // Adjust the import path as necessary
+import { Box } from '@mui/material';
+import HeroSection from './Components/EcommerceApp/HeroSection';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+interface State {
+  cartItems: number;
+  favoriteItems: number;
+}
+
+class App extends Component<{}, State> {
+  state: State = {
+    cartItems: 0,
+    favoriteItems: 0,
+  };
+
+  handleAddToCart = () => {
+    this.setState((prevState) => ({ cartItems: prevState.cartItems + 1 }));
+  };
+
+  handleAddToFavorite = () => {
+    this.setState((prevState) => ({ favoriteItems: prevState.favoriteItems + 1 }));
+  };
+
+  render() {
+    const { cartItems, favoriteItems } = this.state;
+
+    return (
+      <div>
+        <Header cartItems={cartItems} favoriteItems={favoriteItems} />
+        <HeroSection/>
+        <Box padding={2}>
+          <ProductList onAddToCart={this.handleAddToCart} onAddToFavorite={this.handleAddToFavorite} />
+        </Box>
+        
+      </div>
+    );
+  }
 }
 
 export default App;
