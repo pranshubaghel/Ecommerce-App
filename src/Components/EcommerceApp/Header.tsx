@@ -38,3 +38,7 @@ const Header: FC<HeaderProps> = ({ cartItems, favoriteItems }) => {
 };
 
 export default Header;
+
+
+
+
