@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import { Box, Card, CardContent, CardMedia, Typography, Button } from '@mui/material';
-import { RouteComponentProps } from 'react-router-dom';
+import { Box, CircularProgress, Card, CardContent, CardMedia, Typography, Button } from '@mui/material';
 
 interface Product {
   id: number;
@@ -11,27 +10,23 @@ interface Product {
   thumbnail: string;
 }
 
-interface MatchParams {
-  id: string;
-}
-
-interface Props extends RouteComponentProps<MatchParams> {
-  onAddToCart: (product: Product) => void;
-}
-
 interface State {
   product: Product | null;
   loading: boolean;
 }
 
-export default class ProductDetail extends Component<Props, State> {
+interface ProductDetailProps {
+  id: string;
+}
+
+class ProductDetail extends Component<ProductDetailProps, State> {
   state: State = {
     product: null,
     loading: true,
   };
 
   componentDidMount() {
-    const { id } = this.props.match.params;
+    const { id } = this.props;
     axios.get(`https://dummyjson.com/products/${id}`)
       .then(response => {
         this.setState({
@@ -47,25 +42,25 @@ export default class ProductDetail extends Component<Props, State> {
 
   render() {
     const { product, loading } = this.state;
-    const { onAddToCart } = this.props;
 
     if (loading) {
       return <CircularProgress />;
     }
 
     if (!product) {
-      return <Typography>Product not found</Typography>;
+      return <Typography variant="h6">Product not found</Typography>;
     }
 
     return (
       <Box padding={2}>
         <Card>
-          <CardMedia
-            component="img"
-            height="300"
-            image={product.thumbnail}
-            alt={product.title}
-          />
+        <CardMedia
+                  component="img"
+                  height="250"
+                  image={product.thumbnail}
+                  alt={product.title}
+                  style={{ objectFit: 'contain' }}
+                />
           <CardContent>
             <Typography gutterBottom variant="h5" component="div">
               {product.title}
@@ -73,15 +68,22 @@ export default class ProductDetail extends Component<Props, State> {
             <Typography variant="body2" color="textSecondary">
               {product.description}
             </Typography>
-            <Typography variant="body2" color="textPrimary">
+            <Typography variant="h6" color="textPrimary">
               ${product.price}
             </Typography>
-            <Button size="large" color="primary" variant="contained" onClick={() => onAddToCart(product)}>
-              Add to Cart
-            </Button>
+            <Box display="flex" justifyContent="space-between" alignItems="center" mt={2}>
+              <Button size="large" color="primary" variant="contained">
+                Add to Cart
+              </Button>
+              <Button size="large" color="secondary" variant="contained">
+               Order Now
+              </Button>
+            </Box>
           </CardContent>
         </Card>
       </Box>
     );
   }
 }
+
+export default ProductDetail;

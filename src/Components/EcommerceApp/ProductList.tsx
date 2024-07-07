@@ -1,6 +1,10 @@
+
 // import React, { Component } from 'react';
 // import axios from 'axios';
-// import { Box, CircularProgress, Grid, Card, CardContent, CardMedia, Typography, Button } from '@mui/material';
+// import { Box, CircularProgress, Grid, Card, CardContent, CardMedia, Typography, IconButton } from '@mui/material';
+// import { Link } from 'react-router-dom';
+// import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+// import FavoriteIcon from '@mui/icons-material/Favorite';
 
 // interface Product {
 //   id: number;
@@ -10,20 +14,17 @@
 //   thumbnail: string;
 // }
 
-// interface Props {
-//   onAddToCart: () => void;
-//   onAddToFavorite: () => void;
-// }
-
 // interface State {
 //   products: Product[];
 //   loading: boolean;
+//   favorites: number[];
 // }
 
-// export default class ProductList extends Component<Props, State> {
+// export default class ProductList extends Component<{}, State> {
 //   state: State = {
 //     products: [],
 //     loading: true,
+//     favorites: [],
 //   };
 
 //   componentDidMount() {
@@ -39,11 +40,18 @@
 //         this.setState({ loading: false });
 //       });
 //   }
-  
+
+//   handleFavoriteToggle = (productId: number) => {
+//     this.setState(prevState => {
+//       const favorites = prevState.favorites.includes(productId)
+//         ? prevState.favorites.filter(id => id !== productId)
+//         : [...prevState.favorites, productId];
+//       return { favorites };
+//     });
+//   };
 
 //   render() {
-//     const { products, loading } = this.state;
-//     // const { onAddToCart, onAddToFavorite } = this.props;
+//     const { products, loading, favorites } = this.state;
 
 //     if (loading) {
 //       return <CircularProgress />;
@@ -54,32 +62,36 @@
 //         <Grid container spacing={2}>
 //           {products.map(product => (
 //             <Grid item xs={12} sm={6} md={4} lg={3} key={product.id}>
-//               <Card>
-//                 <CardMedia
+//                <Card style={{ height: '100%', display: 'flex', flexDirection: 'column', border: '1px solid #ccc' }}>
+//               <CardMedia
 //                   component="img"
 //                   height="140"
 //                   image={product.thumbnail}
 //                   alt={product.title}
+//                   style={{ objectFit: 'contain' }}
 //                 />
-//                 <CardContent>
-//                   <Typography gutterBottom variant="h5" component="div">
-//                     {product.title}
-//                   </Typography>
-//                   <Typography variant="body2" color="textSecondary">
-//                     {product.description}
-//                   </Typography>
+//                <CardContent style={{ flexGrow: 1 }}>
 //                   <Box display="flex" justifyContent="space-between" alignItems="center">
+//                     <Typography gutterBottom variant="h5" component="div">
+//                       {product.title}
+//                     </Typography>
+//                     <IconButton onClick={() => this.handleFavoriteToggle(product.id)}>
+//                       {favorites.includes(product.id) ? (
+//                         <FavoriteIcon color="error" />
+//                       ) : (
+//                         <FavoriteBorderIcon />
+//                       )}
+//                     </IconButton>
+//                   </Box>
+//                   <Link to={`/product/${product.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+//                     <Typography variant="body2" color="textSecondary">
+//                       {product.description}
+//                     </Typography>
+//                   </Link>
+//                   <Box display="flex" justifyContent="space-between" alignItems="center" marginTop="auto">
 //                     <Typography variant="body2" color="textPrimary">
 //                       ${product.price}
 //                     </Typography>
-//                     {/* <Button size="small" color="primary" variant="contained" onClick={onAddToCart}>
-//                       Add to Cart
-//                     </Button>
-//                     <Box ml={1}>
-//                       <Button size="small" color="secondary" variant="outlined" onClick={onAddToFavorite}>
-//                         Favorite
-//                       </Button>
-//                     </Box> */}
 //                   </Box>
 //                 </CardContent>
 //               </Card>
@@ -90,11 +102,13 @@
 //     );
 //   }
 // }
-
 import React, { Component } from 'react';
 import axios from 'axios';
-import { Box, CircularProgress, Grid, Card, CardContent, CardMedia, Typography, Button } from '@mui/material';
-import { withRouter, RouteComponentProps } from 'react-router-dom';
+import { Box, CircularProgress, Grid, Card, CardContent, CardMedia, Typography, IconButton } from '@mui/material';
+import { Link } from 'react-router-dom';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+// import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 
 interface Product {
   id: number;
@@ -104,9 +118,10 @@ interface Product {
   thumbnail: string;
 }
 
-interface Props extends RouteComponentProps {
-  onAddToCart: (product: Product) => void;
-  onAddToFavorite: (product: Product) => void;
+interface Props {
+  favoriteItems: number[];
+  onAddToCart: () => void;
+  onFavoriteToggle: (productId: number) => void;
 }
 
 interface State {
@@ -114,7 +129,7 @@ interface State {
   loading: boolean;
 }
 
-class ProductList extends Component<Props, State> {
+export default class ProductList extends Component<Props, State> {
   state: State = {
     products: [],
     loading: true,
@@ -134,13 +149,9 @@ class ProductList extends Component<Props, State> {
       });
   }
 
-  handleViewDetails = (productId: number) => {
-    this.props.history.push(`/product/${productId}`);
-  };
-
   render() {
     const { products, loading } = this.state;
-    const { onAddToCart, onAddToFavorite } = this.props;
+    const { favoriteItems, onFavoriteToggle } = this.props;
 
     if (loading) {
       return <CircularProgress />;
@@ -151,44 +162,39 @@ class ProductList extends Component<Props, State> {
         <Grid container spacing={2}>
           {products.map(product => (
             <Grid item xs={12} sm={6} md={4} lg={3} key={product.id}>
-              <Card>
+              <Card style={{ height: '100%', display: 'flex', flexDirection: 'column', border: '1px solid #ccc' }}>
                 <CardMedia
                   component="img"
                   height="140"
                   image={product.thumbnail}
                   alt={product.title}
+                  style={{ objectFit: 'contain' }}
                 />
-                <CardContent>
-                  <Typography gutterBottom variant="h5" component="div">
-                    {product.title}
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    color="textSecondary"
-                    onClick={() => this.handleViewDetails(product.id)}
-                    style={{ cursor: 'pointer' }}
-                  >
-                    {product.description.substring(0, 100)}...
-                  </Typography>
+                <CardContent style={{ flexGrow: 1 }}>
                   <Box display="flex" justifyContent="space-between" alignItems="center">
+                    <Typography gutterBottom variant="h5" component="div">
+                      {product.title}
+                    </Typography>
+                    <IconButton onClick={() => onFavoriteToggle(product.id)}>
+                      {favoriteItems.includes(product.id) ? (
+                        <FavoriteIcon color="error" />
+                      ) : (
+                        <FavoriteBorderIcon />
+                      )}
+                    </IconButton>
+                  </Box>
+                  <Link to={`/product/${product.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                    <Typography variant="body2" color="textSecondary">
+                      {product.description}
+                    </Typography>
+                  </Link>
+                  <Box display="flex" justifyContent="space-between" alignItems="center" marginTop="auto">
                     <Typography variant="body2" color="textPrimary">
                       ${product.price}
                     </Typography>
-                    <Box display="flex">
-                      <Button size="small" color="primary" variant="contained" onClick={() => onAddToCart(product)}>
-                        Add to Cart
-                      </Button>
-                      <Box ml={1}>
-                        <Button size="small" color="secondary" variant="outlined" onClick={() => onAddToFavorite(product)}>
-                          Favorite
-                        </Button>
-                      </Box>
-                      <Box ml={1}>
-                        <Button size="small" color="default" variant="outlined" onClick={() => this.handleViewDetails(product.id)}>
-                          View
-                        </Button>
-                      </Box>
-                    </Box>
+                    {/* <IconButton onClick={onAddToCart}>
+                      <AddShoppingCartIcon />
+                    </IconButton> */}
                   </Box>
                 </CardContent>
               </Card>
@@ -200,7 +206,7 @@ class ProductList extends Component<Props, State> {
   }
 }
 
-export default withRouter(ProductList);
+
 
 
 
