@@ -120,7 +120,7 @@ interface Product {
 
 interface Props {
   favoriteItems: number[];
-  onAddToCart: () => void;
+
   onFavoriteToggle: (productId: number) => void;
 }
 

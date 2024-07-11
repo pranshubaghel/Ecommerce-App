@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Box, Grid, Card, CardContent, CardMedia, Typography } from '@mui/material';
+import { Box, Grid, Card, CardContent, CardMedia, Typography,Button } from '@mui/material';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 
@@ -13,6 +13,7 @@ interface Product {
 
 interface FavoritesProps {
   favoriteItems: number[];
+  updateFavorites: (favoriteItems: number[]) => void;
 }
 
 interface State {
@@ -46,7 +47,11 @@ class Favorites extends Component<FavoritesProps, State> {
         console.log('error fetching products', error);
       });
   }
-
+ 
+  removeFromFavorites = (productId: number) => {
+    const updatedFavorites = this.props.favoriteItems.filter(id => id !== productId);
+    this.props.updateFavorites(updatedFavorites);
+  }
   render() {
     const { products } = this.state;
 
@@ -76,10 +81,18 @@ class Favorites extends Component<FavoritesProps, State> {
                     ${product.price}
                   </Typography>
                 </CardContent>
+                <Box>
+                <Button size="large" color="primary" variant="contained" style={{marginLeft: 6,marginBottom:2}} 
+                   onClick={() => this.removeFromFavorites(product.id)}>
+                  Remove
+              </Button>
+           
+                </Box>
               </Card>
             </Grid>
           ))}
         </Grid>
+        
       </Box>
     );
   }

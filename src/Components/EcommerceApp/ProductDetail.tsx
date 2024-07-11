@@ -39,6 +39,18 @@ class ProductDetail extends Component<ProductDetailProps, State> {
         this.setState({ loading: false });
       });
   }
+  // handleAddToCart = () => {
+  //   const { product } = this.state;
+  //   if (product) {
+  //     this.props.onAddToCart(product.id);
+  //   }
+  // };
+  // handleAddToCart = () => {
+  //   const {product} = this.state;
+  //   if(product) {
+  //     this.props.onAddToCart(product.id);
+  //   }
+  // }
 
   render() {
     const { product, loading } = this.state;
@@ -72,7 +84,7 @@ class ProductDetail extends Component<ProductDetailProps, State> {
               ${product.price}
             </Typography>
             <Box display="flex" justifyContent="space-between" alignItems="center" mt={2}>
-              <Button size="large" color="primary" variant="contained">
+              <Button size="large" color="primary" variant="contained" onClick={this.handleAddToCart}>
                 Add to Cart
               </Button>
               <Button size="large" color="secondary" variant="contained">

@@ -78,7 +78,12 @@ class App extends Component<{}, State> {
       return { favoriteItems };
     });
   };
-
+  // updateFavorites = (favoriteItems: number[]) => {
+  //   this.setState({ favoriteItems });
+  // };
+   updateFavorites = (favoriteItems: number[]) => {
+    this.setState({favoriteItems});
+   }
   render() {
     const { cartItems, favoriteItems } = this.state;
 
@@ -89,11 +94,11 @@ class App extends Component<{}, State> {
         <Routes>
           <Route path="/" element={<ProductList 
             favoriteItems={favoriteItems}
-            onAddToCart={this.handleAddToCart}
+            // onAddToCart={this.handleAddToCart}
             onFavoriteToggle={this.handleFavoriteToggle}
           />} />
           <Route path="/product/:id" element={<ProductDetailWrapper />} />
-          <Route path="/favorites" element={<Favorites favoriteItems={favoriteItems} />} />
+          <Route path="/favorites" element={<Favorites favoriteItems={favoriteItems}  updateFavorites={this.updateFavorites}/>} />
         </Routes>
       </Router>
     );
