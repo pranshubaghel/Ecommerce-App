@@ -1,12 +1,13 @@
 import React from 'react';
-import { Box, Card, CardContent, CardMedia, Typography } from '@mui/material';
+import { Box, Card, CardContent, CardMedia, Typography,Button } from '@mui/material';
 import { Product } from './ProductDetail';
 
 interface CartProps {
   cartItems: Product[];
+  onRemoveFromCart: (productId: number) => void;
 }
 
-const Cart: React.FC<CartProps> = ({ cartItems }) => {
+const Cart: React.FC<CartProps> = ({ cartItems, onRemoveFromCart }) => {
   return (
     <Box padding={2}>
       {cartItems.length === 0 ? (
@@ -32,6 +33,14 @@ const Cart: React.FC<CartProps> = ({ cartItems }) => {
                 ${product.price}
               </Typography>
             </CardContent>
+            <Box>
+                <Button size="large" color="primary" variant="contained" style={{marginLeft: 6,marginBottom:2}}
+                  onClick={() => onRemoveFromCart(product.id)}>
+                
+                  Remove
+              </Button>
+           
+                </Box>
           </Card>
         ))
       )}

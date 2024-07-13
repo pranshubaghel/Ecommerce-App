@@ -133,6 +133,12 @@ class App extends Component<{}, State> {
       cartItems: [...prevState.cartItems, product]
     }));
   };
+  
+  handleRemoveFromCart = (productId: number) => {
+    this.setState((prevState) => ({
+      cartItems: prevState.cartItems.filter(item => item.id !== productId)
+    }));
+  };
 
   handleFavoriteToggle = (productId: number) => {
     this.setState((prevState) => {
@@ -167,7 +173,7 @@ class App extends Component<{}, State> {
           <Route path="/favorites" element={
             <Favorites favoriteItems={favoriteItems} updateFavorites={this.updateFavorites} />
           } />
-          <Route path="/cart" element={<Cart cartItems={cartItems} />} />
+          <Route path="/cart" element={<Cart cartItems={cartItems} onRemoveFromCart={this.handleRemoveFromCart} />} />
         </Routes>
       </Router>
     );
